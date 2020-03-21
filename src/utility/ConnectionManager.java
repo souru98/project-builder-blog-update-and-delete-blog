@@ -29,12 +29,12 @@ public class ConnectionManager {
 		}
 		final String driver = prop.getProperty("driver");
 		final String url = prop.getProperty("url");
-	//	final String username = prop.getProperty("username");
-	//	final String password = prop.getProperty("password");
+		final String username = prop.getProperty("username");
+	final String password = prop.getProperty("password");
 		try {
 			Class.forName(driver);
 			
-		//	connection = DriverManager.getConnection(url,username,password);
+			connection = DriverManager.getConnection(url,username,password);
 			connection = DriverManager.getConnection(url);
 		} catch (SQLException e) {
 			

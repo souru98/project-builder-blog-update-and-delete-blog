@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import model.Blog;
@@ -15,36 +17,48 @@ import utility.ConnectionManager;
 
 public class BlogDaoImpl implements BlogDaoInterface {
 
-	private static final String INSERT_BLOG_SQL = "INSERT INTO blog"
-			+ "  (blogId, blogTitle, blogDescription, postedOn) VALUES " + " (seq_blog.nextval, ?, ?, ?)";
+	
 
-	private static final String SELECT_BLOG_BY_ID = "select blogId,blogTitle,blogDescription,postedOn from blog where blogId =?";
-	private static final String SELECT_ALL_BLOGS = "select * from blog";
+	private static final String SELECT_BLOG_BY_ID = "select blogId,blogname,blogDiscription,postedOn from blog where blogId =?";
+	
 	private static final String DELETE_BLOG_BY_ID = "delete from blog where blogId = ?";
-	private static final String UPDATE_BLOG = "update blog set blogTitle = ?, blogDescription = ?, postedOn = ? where blogId = ?";
+	private static final String UPDATE_BLOG = "update blog set  blogName = ?, blogDiscription = ?, postedOn = ? where blogId = ?";
 
 	public BlogDaoImpl() {
 	}
 
 	@Override
-	public void insertBlog(Blog blog) {
-		System.out.println(INSERT_BLOG_SQL);
-		// try-with-resource statement will auto close the connection.
-		try (Connection connection = ConnectionManager.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BLOG_SQL)) {
-			//preparedStatement.setInt(1, blog.getBlogId());
-			preparedStatement.setString(1,blog.getBlogTitle() );
-			preparedStatement.setString(2, blog.getBlogDescription());
-			preparedStatement.setDate(3, java.sql.Date.valueOf(blog.getPostedOn()));
-			
-			System.out.println(preparedStatement);
-			preparedStatement.executeUpdate();
-		} catch (SQLException exception) {
-			System.out.println(exception);
-		}
-	
+	public void insertBlog(Blog blog) throws SQLException 
+	{
+		// TODO Auto-generated method stub
+		Connection con=ConnectionManager.getConnection();
+		//if(con!=null)
+			//System.out.println("Established");
+		String sql="INSERT INTO BLOG(blogId,blogName ,blogDiscription,postedOn)VALUES(?,?,?,?)";
+		PreparedStatement st=null;
+		
+			st = con.prepareStatement(sql);
+		
+		
+		
+			st.setLong(1, blog.getBlogId());
+		
+		
+			st.setString(2,blog.getBlogTitle());
+		
+			st.setString(3,blog.getBlogDescription());
+		
+			st.setDate(4, java.sql.Date.valueOf(blog.getPostedOn()));
+		
+			st.executeUpdate();
+		
+			con.close();
+		
 		
 	}
+
+	
+	
 
 	@Override
 	public Blog selectBlog(int blogId) {
@@ -62,8 +76,8 @@ public class BlogDaoImpl implements BlogDaoInterface {
 			// Step 4: Process the ResultSet object.
 			while (rs.next()) {
 				int Id = rs.getInt("blogId");
-				String blogTitle = rs.getString("blogTitle");
-				String blogDescription = rs.getString("blogDescription");
+				String blogTitle = rs.getString("blogname");
+				String blogDescription = rs.getString("blogDiscription");
 				LocalDate postedOn = rs.getDate("postedOn").toLocalDate();
 				
 				blog = new Blog();
@@ -89,7 +103,7 @@ public class BlogDaoImpl implements BlogDaoInterface {
 		try (Connection connection = ConnectionManager.getConnection();
 
 				// Step 2:Create a statement using connection object
-				PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_BLOGS);) {
+				PreparedStatement preparedStatement = connection.prepareStatement("select * from BLOG") ) {
 			System.out.println(preparedStatement);
 			// Step 3: Execute the query or update query
 			ResultSet rs = preparedStatement.executeQuery();
@@ -97,9 +111,9 @@ public class BlogDaoImpl implements BlogDaoInterface {
 			// Step 4: Process the ResultSet object.
 			while (rs.next()) {
 				int Id = rs.getInt("blogId");
-				String blogTitle = rs.getString("blogTitle");
+				String blogTitle = rs.getString("blogname");
 				
-				String blogDescription = rs.getString("blogDescription");
+				String blogDescription = rs.getString("blogDiscription");
 				LocalDate postedOn = rs.getDate("postedOn").toLocalDate();
 				
 				blog = new Blog();
